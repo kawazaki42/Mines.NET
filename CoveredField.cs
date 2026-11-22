@@ -17,6 +17,8 @@ class CoveredField(FieldView _field) : Grid<CellState>
     public override int Height => _field.Height;
     public override int Width => _field.Width;
 
+    public Field Mines => _field.Mines;
+
     public override CellState this[int x, int y]
     {
         get
@@ -49,7 +51,7 @@ class CoveredField(FieldView _field) : Grid<CellState>
 
     public bool IsClear()
     {
-        var safe = _field.Mines.Select(it => !it);
+        var safe = _field.MinesRaw.Select(it => !it);
         return open.SequenceEqual(safe);
     }
 
@@ -58,28 +60,53 @@ class CoveredField(FieldView _field) : Grid<CellState>
         flags[Linearize(x, y)].Toggle();
     }
 
-    public bool TryOpen(int x, int y)
+    void OpenAround(int x, int y)
     {
+        var coords =
+            from nx in Enumerable.Range(x - 1, 3)
+            from ny in Enumerable.Range(y - 1, 3)
+            where IsValidCoordinate(nx, ny)
+            where !open[Linearize(nx, ny)]
+            where !flags[Linearize(nx, ny)]
+            select (nx, ny);
+
+        foreach (var (nx, ny) in coords)
+            TryOpen(nx, ny);
+    }
+
+    public void TryOpen(int x, int y)
+    {
+        var already = open[Linearize(x, y)];
+
+        if (already)
+        {
+            OpenAround(x, y);
+            return;
+        }
+
         open[Linearize(x, y)] = true;
 
-        switch (_field[x, y])
-        {
-            case 9:
-                return false;
-            case 0:
-                var coords =
-                    from nx in Enumerable.Range(x - 1, 3)
-                    from ny in Enumerable.Range(y - 1, 3)
-                    where IsValidCoordinate(nx, ny)
-                    where !open[Linearize(nx, ny)]
-                    select (nx, ny);
+        if (_field[x, y] == 0)
+            OpenAround(x, y);
 
-                foreach (var (nx, ny) in coords)
-                    TryOpen(nx, ny);
+        // switch (_field[x, y])
+        // {
+        //     case 9:
+        //         return false;
+        //     case 0:
+        //         var coords =
+        //             from nx in Enumerable.Range(x - 1, 3)
+        //             from ny in Enumerable.Range(y - 1, 3)
+        //             where IsValidCoordinate(nx, ny)
+        //             where !open[Linearize(nx, ny)]
+        //             select (nx, ny);
 
-                return true;
-            default:
-                return true;
-        }
+        //         foreach (var (nx, ny) in coords)
+        //             TryOpen(nx, ny);
+
+        //         return true;
+        //     default:
+        //         return true;
+        // }
     }
 }

@@ -3,7 +3,8 @@ class FieldView(Field _field) : Grid<byte>
     public override int Width => _field.Width;
     public override int Height => _field.Height;
 
-    internal bool[] Mines => _field.mines;
+    internal bool[] MinesRaw => _field.mines;
+    public Field Mines => _field;
 
     // static sbyte OffMargin(int x, int length) => x switch
     // {

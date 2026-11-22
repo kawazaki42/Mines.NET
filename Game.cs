@@ -104,11 +104,12 @@ class Game(CoveredField _field)
             //     break;
 
             case Spacebar:
-                var mine = !_field.TryOpen(X, Y);
+                // var mine = !_field.TryOpen(X, Y);
+                _field.TryOpen(X, Y);
 
                 Redraw();
 
-                if (mine)
+                if (_field.Mines[X, Y])
                     return false;
 
                 break;
