@@ -18,6 +18,7 @@ class CoveredField(FieldView _field) : Grid<CellState>
     public override int Width => _field.Width;
 
     public Field Mines => _field.Mines;
+    internal (int X, int Y)? GameLostPos = null;
 
     public override CellState this[int x, int y]
     {
@@ -88,6 +89,9 @@ class CoveredField(FieldView _field) : Grid<CellState>
 
         if (_field[x, y] == 0)
             OpenAround(x, y);
+
+        if (_field[x, y] == 9)
+            GameLostPos ??= (x, y);
 
         // switch (_field[x, y])
         // {

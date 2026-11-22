@@ -65,6 +65,9 @@ class Game(CoveredField _field)
 
             if (!HandleKey(key))
                 break;
+            
+            if (_field.GameLostPos is not null)
+                break;
 
             if (_field.IsClear())
                 break;
@@ -109,8 +112,8 @@ class Game(CoveredField _field)
 
                 Redraw();
 
-                if (_field.Mines[X, Y])
-                    return false;
+                // if (_field.Mines[X, Y])
+                //     return false;
 
                 break;
         }
