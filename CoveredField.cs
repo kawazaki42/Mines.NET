@@ -1,6 +1,5 @@
 class CoveredField(FieldView _field) : Grid<char>
 {
-    // bool[] open = Array.CreateInstance(typeof(bool), _field.Width * _field.Height);
     readonly bool[] open = new bool[_field.Width * _field.Height];
 
     public override int Height => _field.Height;
@@ -10,12 +9,9 @@ class CoveredField(FieldView _field) : Grid<char>
     {
         get
         {
-            // var linearized = y * _field.Width + x;
-
             if (!open[Linearize(x, y)])
                 return 'O';
 
-            // return _field[x, y].ToString()[0];
             return _field[x, y] switch
             {
                 0 => ' ',
@@ -23,11 +19,6 @@ class CoveredField(FieldView _field) : Grid<char>
                 var count => count.ToString()[0],
             };
         }
-
-        // private new set
-        // {
-        //     open[Linearize(x, y)] = value
-        // }
     }
 
     protected override string Repr(char item) => item switch
@@ -36,10 +27,35 @@ class CoveredField(FieldView _field) : Grid<char>
         var other => " " + other,
     };
 
-    // private new this[int x, int y]
-    // {
-    //     set => open[Linearize(x, y)] = value;
-    // }
+    public bool IsClear()
+    {
+        // var bad =
+        //     from pair in Enumerable.Zip(_field.Mines, open)
+        //     let isMine = pair.First
+        //     let isOpen = pair.Second
+        //     // where pair is (var isMine, var isOpen)
+        //     select isMine == isOpen;
+
+        // // Enumerable.Zip(_field.Mines, open).Where(pair =>
+        // // {
+        // //     var (isMine, isOpen) = pair;
+
+
+        // // })
+
+        // return bad.Any(it => it);
+
+        // var pairs = Enumerable.Zip(_field.Mines, open)
+
+        // foreach ((var isMine, var isOpen) in pairs)
+        // {
+
+        // }
+
+        var safe = _field.Mines.Select(it => !it).ToArray();
+        return open.SequenceEqual(safe);
+        // new List<int>().SequenceEqual
+    }
 
     public bool TryOpen(int x, int y)
     {
@@ -55,9 +71,9 @@ class CoveredField(FieldView _field) : Grid<char>
                     from ny in Enumerable.Range(y - 1, 3)
                     where IsValidCoordinate(nx, ny)
                     where !open[Linearize(nx, ny)]
-                    where (nx, ny) != (x, y)
+                    // where (nx, ny) != (x, y)
                     select (nx, ny);
-                
+
                 foreach (var (nx, ny) in coords)
                     TryOpen(nx, ny);
 

@@ -1,6 +1,6 @@
 class Field : Grid<bool>
 {
-    readonly bool[] mines;
+    internal readonly bool[] mines;
 
     public override int Width { get; }
     public override int Height { get; }
@@ -23,4 +23,6 @@ class Field : Grid<bool>
     }
 
     public override bool this[int x, int y] => mines[Linearize(x, y)];
+
+    // internal bool AtLinear(int index) => mines[index];
 }

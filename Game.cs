@@ -39,7 +39,7 @@ class Game(CoveredField _field)
 
     private void SetCursor()
     {
-        SetCursorPosition(X * CellWidth + 1, Y);
+        Console.SetCursorPosition(X * CellWidth + 1, Y);
     }
 
     internal void Start()
@@ -47,12 +47,29 @@ class Game(CoveredField _field)
         Redraw();
         SetCursor();
 
+        Console.CancelKeyPress += (_, _) => {
+            Console.SetCursorPosition(0, _field.Height);
+        };
+
+        // ConsoleCancelEventArgs
+
+        // Console.TreatControlCAsInput
+
         while (true)
         {
-            var key = ReadKey(intercept: true);
+            // prevent the key from printing itself?
+            const bool intercept = true;
+
+            var key = ReadKey(intercept);
+
             if (!HandleKey(key))
-                return;
+                break;
+            
+            if (_field.IsClear())
+                break;
         }
+
+        Console.SetCursorPosition(0, _field.Height);
     }
 
     bool HandleKey(ConsoleKeyInfo key)
