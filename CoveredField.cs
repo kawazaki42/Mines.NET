@@ -1,60 +1,61 @@
-class CoveredField(FieldView _field) : Grid<char>
+record Closed(bool flag);
+record Open(byte mines);
+// record Mine;
+
+union CellState(Open, Closed);
+
+static class Extension
+{
+    internal static void Toggle(ref this bool self) => self = !self;
+}
+
+class CoveredField(FieldView _field) : Grid<CellState>
 {
     readonly bool[] open = new bool[_field.Width * _field.Height];
+    public readonly bool[] flags = new bool[_field.Width * _field.Height];
 
     public override int Height => _field.Height;
     public override int Width => _field.Width;
 
-    public override char this[int x, int y]
+    public override CellState this[int x, int y]
     {
         get
         {
-            if (!open[Linearize(x, y)])
-                return 'O';
+            if (open[Linearize(x, y)])
+                // return 'O';
+                return new Open(_field[x, y]);
 
-            return _field[x, y] switch
-            {
-                0 => ' ',
-                9 => '*',
-                var count => count.ToString()[0],
-            };
+            return new Closed(flags[Linearize(x, y)]);
+
+            // return _field[x, y] switch
+            // {
+            //     0 => ' ',
+            //     9 => '*',
+            //     var count => count.ToString()[0],
+            // };
         }
     }
 
-    protected override string Repr(char item) => item switch
+    protected override string Repr(CellState item) => item switch
     {
-        'O' => "[]",
-        var other => " " + other,
+        // 'O' => "[]",
+        // var other => " " + other,
+        Closed(false) => "[]",
+        Closed(true) => "##",
+        Open(0) => "  ",
+        Open(9) => " *",
+        Open(var mines) => $" {mines}",
     };
 
     public bool IsClear()
     {
-        // var bad =
-        //     from pair in Enumerable.Zip(_field.Mines, open)
-        //     let isMine = pair.First
-        //     let isOpen = pair.Second
-        //     // where pair is (var isMine, var isOpen)
-        //     select isMine == isOpen;
-
-        // // Enumerable.Zip(_field.Mines, open).Where(pair =>
-        // // {
-        // //     var (isMine, isOpen) = pair;
-
-
-        // // })
-
-        // return bad.Any(it => it);
-
-        // var pairs = Enumerable.Zip(_field.Mines, open)
-
-        // foreach ((var isMine, var isOpen) in pairs)
-        // {
-
-        // }
-
-        var safe = _field.Mines.Select(it => !it).ToArray();
+        var safe = _field.Mines.Select(it => !it);
         return open.SequenceEqual(safe);
-        // new List<int>().SequenceEqual
+    }
+
+    public void ToggleFlagAt(int x, int y)
+    {
+        flags[Linearize(x, y)].Toggle();
     }
 
     public bool TryOpen(int x, int y)
@@ -71,15 +72,14 @@ class CoveredField(FieldView _field) : Grid<char>
                     from ny in Enumerable.Range(y - 1, 3)
                     where IsValidCoordinate(nx, ny)
                     where !open[Linearize(nx, ny)]
-                    // where (nx, ny) != (x, y)
                     select (nx, ny);
 
                 foreach (var (nx, ny) in coords)
                     TryOpen(nx, ny);
 
                 return true;
+            default:
+                return true;
         }
-
-        return true;
     }
 }

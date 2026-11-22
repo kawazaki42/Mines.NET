@@ -47,7 +47,8 @@ class Game(CoveredField _field)
         Redraw();
         SetCursor();
 
-        Console.CancelKeyPress += (_, _) => {
+        Console.CancelKeyPress += (_, _) =>
+        {
             Console.SetCursorPosition(0, _field.Height);
         };
 
@@ -64,7 +65,7 @@ class Game(CoveredField _field)
 
             if (!HandleKey(key))
                 break;
-            
+
             if (_field.IsClear())
                 break;
         }
@@ -79,15 +80,29 @@ class Game(CoveredField _field)
             case RightArrow:
                 X++;
                 break;
+
             case LeftArrow:
                 X--;
                 break;
+
             case DownArrow:
                 Y++;
                 break;
+
             case UpArrow:
                 Y--;
                 break;
+
+            case F:
+                _field.ToggleFlagAt(X, Y);
+                Redraw();
+                break;
+
+            // case Spacebar when key.Modifiers.HasFlag(ConsoleModifiers.Shift):
+            //     _field.ToggleFlagAt(X, Y);
+            //     Redraw();
+            //     break;
+
             case Spacebar:
                 var mine = !_field.TryOpen(X, Y);
 
