@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Caching.Memory;
+
 internal class Program // (CoveredField state)
 {
     // private CoveredField State;
@@ -18,27 +20,74 @@ internal class Program // (CoveredField state)
         var view = new FieldView(f);
         var covered = new CoveredField(view);
 
-        Console.WriteLine(f);
-        Console.WriteLine();
-        Console.WriteLine(view);
-        Console.WriteLine();
+        Console.Clear();
+
+        // Console.WriteLine(f);
+        // Console.WriteLine();
+        // Console.WriteLine(view);
+        // Console.WriteLine();
         Console.WriteLine(covered);
+
+        Console.SetCursorPosition(0, 0);
 
         while (true)
         {
-            try
+            var key = Console.ReadKey(intercept: true);
+
+            // Console.WriteLine(((byte)key.KeyChar));
+
+            // Console.MoveBufferArea
+
+            switch (key.Key)
             {
-                if (Interact(covered))
+                case ConsoleKey.RightArrow:
+                    Console.CursorLeft++;
+                    break;
+                case ConsoleKey.LeftArrow:
+                    if (Console.CursorLeft > 0)
+                        Console.CursorLeft--;
+                    break;
+                case ConsoleKey.DownArrow:
+                    Console.CursorTop++;
+                    break;
+                case ConsoleKey.UpArrow:
+                    // Console.Write(Console.CursorTop--);
+                    Console.CursorTop--;
+                    break;
+                case ConsoleKey.Spacebar:
+                    var y = Console.CursorTop;
+
+                    if (Console.CursorLeft % 2 != 0)
+                        break;
+
+                    var x = Console.CursorLeft / 2;
+                    var mine = !covered.TryOpen(x, y);
+                    Console.Clear();
+                    Console.WriteLine(covered);
+
+                    if (mine)
+                        return;
+
+                    Console.SetCursorPosition(x * 2, y);
                     break;
             }
-            catch (Exception e)
-            {
-                if (e is not FormatException and not ArgumentOutOfRangeException)
-                    throw;
-
-                Console.WriteLine($"lox {e.Message}");
-            }
         }
+
+        // while (true)
+        // {
+        //     try
+        //     {
+        //         if (Interact(covered))
+        //             break;
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         if (e is not FormatException and not ArgumentOutOfRangeException)
+        //             throw;
+
+        //         Console.WriteLine($"lox {e.Message}");
+        //     }
+        // }
     }
 
     static bool Interact(CoveredField state)
