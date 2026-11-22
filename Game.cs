@@ -51,17 +51,24 @@ class Game(CoveredField field)
 {
     const int cellWidth = 3;
 
+    int x = 0;
+    int y = 0;
+
     private void Redraw()
     {
         Clear();
         WriteLine(field);
     }
 
+    private void SetCursor()
+    {
+        SetCursorPosition(x * cellWidth + 1, y);
+    }
+
     internal void Start()
     {
         Redraw();
-
-        SetCursorPosition(1, 0);
+        SetCursor();
 
         while (true)
         {
@@ -70,28 +77,34 @@ class Game(CoveredField field)
             switch (key.Key)
             {
                 case RightArrow:
-                    CursorLeft += cellWidth;
+                    // CursorLeft += cellWidth;
+                    x++;
                     break;
                 case LeftArrow:
-                    if (CursorLeft - cellWidth >= 0)
-                        CursorLeft -= cellWidth;
+                    // if (CursorLeft - cellWidth >= 0)
+                    //     CursorLeft -= cellWidth;
+                    if (x > 0)
+                        x--;
                     break;
                 case DownArrow:
-                    CursorTop++;
+                    // CursorTop++;
+                    y++;
                     break;
                 case UpArrow:
                     // Console.Write(Console.CursorTop--);
-                    if (CursorTop > 0)
-                        CursorTop--;
+                    // if (CursorTop > 0)
+                    //     CursorTop--;
+                    if (y > 0)
+                        y--;
                     break;
                 case Spacebar:
-                    var y = CursorTop;
+                    // var y = CursorTop;
 
                     // edge
-                    if (CursorLeft % cellWidth == cellWidth - 1)
-                        break;
+                    // if (CursorLeft % cellWidth == cellWidth - 1)
+                        // break;
 
-                    var x = CursorLeft / cellWidth;
+                    // var x = CursorLeft / cellWidth;
                     var mine = !field.TryOpen(x, y);
 
                     Redraw();
@@ -99,9 +112,11 @@ class Game(CoveredField field)
                     if (mine)
                         return;
 
-                    SetCursorPosition(x * cellWidth + 1, y);
+                    // SetCursorPosition(x * cellWidth + 1, y);
                     break;
             }
+
+            SetCursor();
         }
     }
 }
