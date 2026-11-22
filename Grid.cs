@@ -10,6 +10,8 @@ abstract class Grid<T>
     public bool IsValidCoordinate(int x, int y) =>
         (0 <= x && x < Width) && (0 <= y && y < Height);
 
+    public const string CellSeparator = "";
+
     public IEnumerable<IEnumerable<T>> Rows()
     {
         return
@@ -27,9 +29,11 @@ abstract class Grid<T>
     {
         var lines =
             from row in Rows()
-                // let fmtRow =
-                //     from item in row
-            select string.Join('.', row.Select(it => Repr(it)));
+            let fmtRow =
+                from item in row
+                select Repr(item)
+            // select string.Join(CellSeparator, row.Select(it => Repr(it)));
+            select string.Join(CellSeparator, fmtRow);
 
         return string.Join('\n', lines);
     }

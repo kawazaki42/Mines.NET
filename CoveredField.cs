@@ -20,6 +20,8 @@ class CoveredField(FieldView _field) : Grid<CellState>
     public Field Mines => _field.Mines;
     internal (int X, int Y)? GameLostPos = null;
 
+    public static int CellWidth => 2;
+
     public override CellState this[int x, int y]
     {
         get
@@ -39,16 +41,24 @@ class CoveredField(FieldView _field) : Grid<CellState>
         }
     }
 
-    protected override string Repr(CellState item) => item switch
+    protected override string Repr(CellState item)
     {
-        // 'O' => "[]",
-        // var other => " " + other,
-        Closed(false) => "[]",
-        Closed(true) => "##",
-        Open(0) => "  ",
-        Open(9) => " *",
-        Open(var mines) => $" {mines}",
-    };
+        var result = item switch
+        {
+            // 'O' => "[]",
+            // var other => " " + other,
+            Closed(false) => "()",
+            Closed(true) => "##",
+            Open(0) => " ",
+            Open(9) => "*",
+            Open(var mines) => mines.ToString(),
+        };
+
+        if (result.Length > CellWidth)
+            return "!!";
+
+        return result.PadLeft(CellWidth);
+    }
 
     public bool IsClear()
     {

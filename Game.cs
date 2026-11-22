@@ -17,7 +17,8 @@ class Program
 
 class Game(CoveredField _field)
 {
-    const int CellWidth = 3;
+    // const int CellWidth = 3;
+    static int CellWidth => CoveredField.CellWidth + CoveredField.CellSeparator.Length;
 
     int X
     {
@@ -37,19 +38,24 @@ class Game(CoveredField _field)
         WriteLine(_field);
     }
 
-    private void SetCursor()
+    private void MoveCursorIntoField()
     {
         Console.SetCursorPosition(X * CellWidth + 1, Y);
+    }
+
+    private void MoveCursorAfterField()
+    {
+        Console.SetCursorPosition(0, _field.Height);
     }
 
     internal void Start()
     {
         Redraw();
-        SetCursor();
+        MoveCursorIntoField();
 
         Console.CancelKeyPress += (_, _) =>
         {
-            Console.SetCursorPosition(0, _field.Height);
+            MoveCursorAfterField();
         };
 
         // ConsoleCancelEventArgs
@@ -62,21 +68,30 @@ class Game(CoveredField _field)
             const bool intercept = true;
 
             var key = ReadKey(intercept);
+            HandleKey(key);
 
-            if (!HandleKey(key))
-                break;
-            
+            // if (!HandleKey(key))
+            // break;
+
             if (_field.GameLostPos is not null)
-                break;
+            {
+                MoveCursorAfterField();
+                Console.WriteLine("You lost");
+                return;
+            }
 
             if (_field.IsClear())
-                break;
+            {
+                MoveCursorAfterField();
+                Console.WriteLine("You win");
+                return;
+            }
         }
 
-        Console.SetCursorPosition(0, _field.Height);
+        // Console.SetCursorPosition(0, _field.Height);
     }
 
-    bool HandleKey(ConsoleKeyInfo key)
+    void HandleKey(ConsoleKeyInfo key)
     {
         switch (key.Key)
         {
@@ -118,7 +133,7 @@ class Game(CoveredField _field)
                 break;
         }
 
-        SetCursor();
-        return true;
+        MoveCursorIntoField();
+        // return true;
     }
 }
