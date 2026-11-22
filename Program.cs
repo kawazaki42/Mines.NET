@@ -1,8 +1,8 @@
-internal class Program // (CoveredField state)
+class Program // (CoveredField state)
 {
     // private CoveredField State;
 
-    private static void Main(string[] args)
+    static void Main()
     {
         var f = new Field(8, 8);
         f.Randomize(10);
@@ -10,77 +10,7 @@ internal class Program // (CoveredField state)
         var view = new FieldView(f);
         var covered = new CoveredField(view);
 
-        Console.Clear();
-
-        // Console.WriteLine(f);
-        // Console.WriteLine();
-        // Console.WriteLine(view);
-        // Console.WriteLine();
-        Console.WriteLine(covered);
-
-        Console.SetCursorPosition(1, 0);
-
-        while (true)
-        {
-            var key = Console.ReadKey(intercept: true);
-
-            // Console.WriteLine(((byte)key.KeyChar));
-
-            // Console.MoveBufferArea
-
-            // using static ConsoleKey;
-
-            switch (key.Key)
-            {
-                case ConsoleKey.RightArrow:
-                    Console.CursorLeft += 3;
-                    break;
-                case ConsoleKey.LeftArrow:
-                    if (Console.CursorLeft -3 >= 0)
-                        Console.CursorLeft -= 3;
-                    break;
-                case ConsoleKey.DownArrow:
-                    Console.CursorTop++;
-                    break;
-                case ConsoleKey.UpArrow:
-                    // Console.Write(Console.CursorTop--);
-                    if (Console.CursorTop > 0)
-                        Console.CursorTop--;
-                    break;
-                case ConsoleKey.Spacebar:
-                    var y = Console.CursorTop;
-
-                    if (Console.CursorLeft % 3 == 2)
-                        break;
-
-                    var x = Console.CursorLeft / 3;
-                    var mine = !covered.TryOpen(x, y);
-                    Console.Clear();
-                    Console.WriteLine(covered);
-
-                    if (mine)
-                        return;
-
-                    Console.SetCursorPosition(x * 3 + 1, y);
-                    break;
-            }
-        }
-
-        // while (true)
-        // {
-        //     try
-        //     {
-        //         if (Interact(covered))
-        //             break;
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         if (e is not FormatException and not ArgumentOutOfRangeException)
-        //             throw;
-
-        //         Console.WriteLine($"lox {e.Message}");
-        //     }
-        // }
+        new Game(covered).Start();
     }
 
     static bool Interact(CoveredField state)
@@ -111,5 +41,64 @@ internal class Program // (CoveredField state)
         Console.WriteLine(state);
 
         return false;
+    }
+}
+
+class Game(CoveredField field)
+{
+    internal void Start()
+    {
+
+        Console.Clear();
+
+        Console.WriteLine(field);
+
+        Console.SetCursorPosition(1, 0);
+
+        while (true)
+        {
+            var key = Console.ReadKey(intercept: true);
+
+            // Console.WriteLine(((byte)key.KeyChar));
+
+            // Console.MoveBufferArea
+
+            // using static ConsoleKey;
+
+            switch (key.Key)
+            {
+                case ConsoleKey.RightArrow:
+                    Console.CursorLeft += 3;
+                    break;
+                case ConsoleKey.LeftArrow:
+                    if (Console.CursorLeft - 3 >= 0)
+                        Console.CursorLeft -= 3;
+                    break;
+                case ConsoleKey.DownArrow:
+                    Console.CursorTop++;
+                    break;
+                case ConsoleKey.UpArrow:
+                    // Console.Write(Console.CursorTop--);
+                    if (Console.CursorTop > 0)
+                        Console.CursorTop--;
+                    break;
+                case ConsoleKey.Spacebar:
+                    var y = Console.CursorTop;
+
+                    if (Console.CursorLeft % 3 == 2)
+                        break;
+
+                    var x = Console.CursorLeft / 3;
+                    var mine = !field.TryOpen(x, y);
+                    Console.Clear();
+                    Console.WriteLine(field);
+
+                    if (mine)
+                        return;
+
+                    Console.SetCursorPosition(x * 3 + 1, y);
+                    break;
+            }
+        }
     }
 }
