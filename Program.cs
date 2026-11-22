@@ -49,12 +49,17 @@ class Program // (CoveredField state)
 
 class Game(CoveredField field)
 {
+    const int cellWidth = 3;
+
+    private void Redraw()
+    {
+        Clear();
+        WriteLine(field);
+    }
+
     internal void Start()
     {
-
-        Clear();
-
-        WriteLine(field);
+        Redraw();
 
         SetCursorPosition(1, 0);
 
@@ -62,20 +67,14 @@ class Game(CoveredField field)
         {
             var key = ReadKey(intercept: true);
 
-            // Console.WriteLine(((byte)key.KeyChar));
-
-            // Console.MoveBufferArea
-
-            // using static ConsoleKey;
-
             switch (key.Key)
             {
                 case RightArrow:
-                    CursorLeft += 3;
+                    CursorLeft += cellWidth;
                     break;
                 case LeftArrow:
-                    if (CursorLeft - 3 >= 0)
-                        CursorLeft -= 3;
+                    if (CursorLeft - cellWidth >= 0)
+                        CursorLeft -= cellWidth;
                     break;
                 case DownArrow:
                     CursorTop++;
@@ -88,18 +87,19 @@ class Game(CoveredField field)
                 case Spacebar:
                     var y = CursorTop;
 
-                    if (CursorLeft % 3 == 2)
+                    // edge
+                    if (CursorLeft % cellWidth == cellWidth - 1)
                         break;
 
-                    var x = CursorLeft / 3;
+                    var x = CursorLeft / cellWidth;
                     var mine = !field.TryOpen(x, y);
-                    Clear();
-                    WriteLine(field);
+
+                    Redraw();
 
                     if (mine)
                         return;
 
-                    SetCursorPosition(x * 3 + 1, y);
+                    SetCursorPosition(x * cellWidth + 1, y);
                     break;
             }
         }
