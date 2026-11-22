@@ -15,22 +15,31 @@ class Program
     }
 }
 
-class Game(CoveredField field)
+class Game(CoveredField _field)
 {
-    const int cellWidth = 3;
+    const int CellWidth = 3;
 
-    int x = 0;
-    int y = 0;
+    int X
+    {
+        get;
+        set => field = Math.Clamp(value, 0, _field.Width - 1);
+    } = 0;
+
+    int Y
+    {
+        get;
+        set => field = Math.Clamp(value, 0, _field.Height - 1);
+    } = 0;
 
     private void Redraw()
     {
         Clear();
-        WriteLine(field);
+        WriteLine(_field);
     }
 
     private void SetCursor()
     {
-        SetCursorPosition(x * cellWidth + 1, y);
+        SetCursorPosition(X * CellWidth + 1, Y);
     }
 
     internal void Start()
@@ -51,21 +60,19 @@ class Game(CoveredField field)
         switch (key.Key)
         {
             case RightArrow:
-                x++;
+                X++;
                 break;
             case LeftArrow:
-                if (x > 0)
-                    x--;
+                X--;
                 break;
             case DownArrow:
-                y++;
+                Y++;
                 break;
             case UpArrow:
-                if (y > 0)
-                    y--;
+                Y--;
                 break;
             case Spacebar:
-                var mine = !field.TryOpen(x, y);
+                var mine = !_field.TryOpen(X, Y);
 
                 Redraw();
 
