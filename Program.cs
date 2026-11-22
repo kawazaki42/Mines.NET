@@ -1,3 +1,6 @@
+using static System.ConsoleKey;
+using static System.Console;
+
 class Program // (CoveredField state)
 {
     // private CoveredField State;
@@ -49,15 +52,15 @@ class Game(CoveredField field)
     internal void Start()
     {
 
-        Console.Clear();
+        Clear();
 
-        Console.WriteLine(field);
+        WriteLine(field);
 
-        Console.SetCursorPosition(1, 0);
+        SetCursorPosition(1, 0);
 
         while (true)
         {
-            var key = Console.ReadKey(intercept: true);
+            var key = ReadKey(intercept: true);
 
             // Console.WriteLine(((byte)key.KeyChar));
 
@@ -67,36 +70,36 @@ class Game(CoveredField field)
 
             switch (key.Key)
             {
-                case ConsoleKey.RightArrow:
-                    Console.CursorLeft += 3;
+                case RightArrow:
+                    CursorLeft += 3;
                     break;
-                case ConsoleKey.LeftArrow:
-                    if (Console.CursorLeft - 3 >= 0)
-                        Console.CursorLeft -= 3;
+                case LeftArrow:
+                    if (CursorLeft - 3 >= 0)
+                        CursorLeft -= 3;
                     break;
-                case ConsoleKey.DownArrow:
-                    Console.CursorTop++;
+                case DownArrow:
+                    CursorTop++;
                     break;
-                case ConsoleKey.UpArrow:
+                case UpArrow:
                     // Console.Write(Console.CursorTop--);
-                    if (Console.CursorTop > 0)
-                        Console.CursorTop--;
+                    if (CursorTop > 0)
+                        CursorTop--;
                     break;
-                case ConsoleKey.Spacebar:
-                    var y = Console.CursorTop;
+                case Spacebar:
+                    var y = CursorTop;
 
-                    if (Console.CursorLeft % 3 == 2)
+                    if (CursorLeft % 3 == 2)
                         break;
 
-                    var x = Console.CursorLeft / 3;
+                    var x = CursorLeft / 3;
                     var mine = !field.TryOpen(x, y);
-                    Console.Clear();
-                    Console.WriteLine(field);
+                    Clear();
+                    WriteLine(field);
 
                     if (mine)
                         return;
 
-                    Console.SetCursorPosition(x * 3 + 1, y);
+                    SetCursorPosition(x * 3 + 1, y);
                     break;
             }
         }
