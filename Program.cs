@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Caching.Memory;
-
 internal class Program // (CoveredField state)
 {
     // private CoveredField State;
@@ -28,7 +26,7 @@ internal class Program // (CoveredField state)
         // Console.WriteLine();
         Console.WriteLine(covered);
 
-        Console.SetCursorPosition(0, 0);
+        Console.SetCursorPosition(1, 0);
 
         while (true)
         {
@@ -38,29 +36,32 @@ internal class Program // (CoveredField state)
 
             // Console.MoveBufferArea
 
+            // using static ConsoleKey;
+
             switch (key.Key)
             {
                 case ConsoleKey.RightArrow:
-                    Console.CursorLeft++;
+                    Console.CursorLeft += 3;
                     break;
                 case ConsoleKey.LeftArrow:
-                    if (Console.CursorLeft > 0)
-                        Console.CursorLeft--;
+                    if (Console.CursorLeft -3 >= 0)
+                        Console.CursorLeft -= 3;
                     break;
                 case ConsoleKey.DownArrow:
                     Console.CursorTop++;
                     break;
                 case ConsoleKey.UpArrow:
                     // Console.Write(Console.CursorTop--);
-                    Console.CursorTop--;
+                    if (Console.CursorTop > 0)
+                        Console.CursorTop--;
                     break;
                 case ConsoleKey.Spacebar:
                     var y = Console.CursorTop;
 
-                    if (Console.CursorLeft % 2 != 0)
+                    if (Console.CursorLeft % 3 == 2)
                         break;
 
-                    var x = Console.CursorLeft / 2;
+                    var x = Console.CursorLeft / 3;
                     var mine = !covered.TryOpen(x, y);
                     Console.Clear();
                     Console.WriteLine(covered);
@@ -68,7 +69,7 @@ internal class Program // (CoveredField state)
                     if (mine)
                         return;
 
-                    Console.SetCursorPosition(x * 2, y);
+                    Console.SetCursorPosition(x * 3 + 1, y);
                     break;
             }
         }
@@ -344,6 +345,12 @@ class CoveredField(FieldView _field) : Grid<char>
         //     open[Linearize(x, y)] = value
         // }
     }
+
+    protected override string Repr(char item) => item switch
+    {
+        'O' => "[]",
+        var other => " " + other,
+    };
 
     // private new this[int x, int y]
     // {
