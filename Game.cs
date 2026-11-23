@@ -1,5 +1,5 @@
-using static System.ConsoleKey;
-using static System.Console;
+using K = System.ConsoleKey;
+// using static System.Console;
 
 class Program
 {
@@ -34,8 +34,8 @@ class Game(CoveredField _field)
 
     private void Redraw()
     {
-        Clear();
-        WriteLine(_field);
+        Console.Clear();
+        Console.WriteLine(_field);
     }
 
     private void MoveCursorIntoField()
@@ -67,7 +67,7 @@ class Game(CoveredField _field)
             // prevent the key from printing itself?
             const bool intercept = true;
 
-            var key = ReadKey(intercept);
+            var key = Console.ReadKey(intercept);
             HandleKey(key);
 
             // if (!HandleKey(key))
@@ -95,23 +95,23 @@ class Game(CoveredField _field)
     {
         switch (key.Key)
         {
-            case RightArrow:
+            case K.RightArrow or K.D:
                 X++;
                 break;
 
-            case LeftArrow:
+            case K.LeftArrow or K.A:
                 X--;
                 break;
 
-            case DownArrow:
+            case K.DownArrow or K.S:
                 Y++;
                 break;
 
-            case UpArrow:
+            case K.UpArrow or K.W:
                 Y--;
                 break;
 
-            case F:
+            case K.Z:
                 _field.ToggleFlagAt(X, Y);
                 Redraw();
                 break;
@@ -121,7 +121,7 @@ class Game(CoveredField _field)
             //     Redraw();
             //     break;
 
-            case Spacebar:
+            case K.Spacebar:
                 // var mine = !_field.TryOpen(X, Y);
                 _field.TryOpen(X, Y);
 
