@@ -47,8 +47,8 @@ class CoveredField(FieldView _field) : Grid<CellState>
         {
             // 'O' => "[]",
             // var other => " " + other,
-            Closed(false) => "()",
-            Closed(true) => "##",
+            Closed(false) => "[]",
+            Closed(true) => "#",
             Open(0) => " ",
             Open(9) => "*",
             Open(var mines) => mines.ToString(),
