@@ -66,13 +66,45 @@ class CoveredField(FieldView _field) : Grid<CellState>
         return open.SequenceEqual(safe);
     }
 
+    public void OpenAll()
+    {
+        foreach (var y in Enumerable.Range(0, Height))
+            foreach (var x in Enumerable.Range(0, Width))
+                // if (_field[x, y] != 9)
+                //     TryOpen(x, y);
+                if (_field[x, y] == 9)
+                    flags[Linearize(x, y)] = true;
+    }
+
     public void ToggleFlagAt(int x, int y)
     {
+        if (open[Linearize(x, y)])
+            return;
+
         flags[Linearize(x, y)].Toggle();
+    }
+
+    IEnumerable<(int X, int Y)> Neighbors(int x, int y)
+    {
+        return
+            from nx in Enumerable.Range(x - 1, 3)
+            from ny in Enumerable.Range(y - 1, 3)
+            where IsValidCoordinate(nx, ny)
+            select (nx, ny);
     }
 
     void OpenAround(int x, int y)
     {
+        var flagged =
+            from coord in Neighbors(x, y)
+            let nx = coord.X
+            let ny = coord.Y
+            where flags[Linearize(nx, ny)]
+            select (nx, ny);
+
+        if (flagged.Count() != _field[x, y])
+            return;
+
         var coords =
             from nx in Enumerable.Range(x - 1, 3)
             from ny in Enumerable.Range(y - 1, 3)
@@ -87,6 +119,9 @@ class CoveredField(FieldView _field) : Grid<CellState>
 
     public void TryOpen(int x, int y)
     {
+        if (flags[Linearize(x, y)])
+            return;
+
         var already = open[Linearize(x, y)];
 
         if (already)

@@ -82,6 +82,8 @@ class Game(CoveredField _field)
 
             if (_field.IsClear())
             {
+                _field.OpenAll();
+                Redraw();
                 MoveCursorAfterField();
                 Console.WriteLine("You win");
                 return;
