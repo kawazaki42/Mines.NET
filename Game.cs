@@ -32,20 +32,38 @@ class Game(CoveredField _field)
         set => field = Math.Clamp(value, 0, _field.Height - 1);
     } = 0;
 
+    Coordinate ScreenCenter => new(
+        (Console.WindowWidth - _field.Width * CellWidth) / 2,
+        (Console.WindowHeight - _field.Height) / 2
+    );
+
     private void Redraw()
     {
         Console.Clear();
-        Console.WriteLine(_field);
+
+        var (x, y) = ScreenCenter;
+
+        Console.SetCursorPosition(x, y);
+
+        foreach (var line in _field.ToString().Split('\n'))
+        {
+            Console.Write(line);
+            Console.CursorTop++;
+            Console.CursorLeft = x;
+        }
+
     }
 
     private void MoveCursorIntoField()
     {
-        Console.SetCursorPosition(X * CellWidth + 1, Y);
+        var (x, y) = ScreenCenter;
+        Console.SetCursorPosition(x + X * CellWidth + 1, y + Y);
     }
 
     private void MoveCursorAfterField()
     {
-        Console.SetCursorPosition(0, _field.Height);
+        // Console.SetCursorPosition(0, _field.Height);
+        Console.SetCursorPosition(0, 0);
     }
 
     internal void Start()
@@ -113,7 +131,7 @@ class Game(CoveredField _field)
                 Y--;
                 break;
 
-            case K.Z:
+            case K.Z or K.OemComma:
                 _field.ToggleFlagAt(X, Y);
                 Redraw();
                 break;

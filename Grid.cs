@@ -1,3 +1,7 @@
+record struct Coordinate(int X, int Y);
+
+// System.Collections.Specialized.
+
 abstract class Grid<T>
 {
     abstract public int Height { get; }
